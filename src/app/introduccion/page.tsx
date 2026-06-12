@@ -8,7 +8,7 @@ export default function IntroduccionPage() {
         eyebrow="Primera parada"
         title="¿Qué es la alimentación animal?"
         description="Descubre por qué los animales necesitan comer y qué pistas podemos observar antes de clasificarlos."
-        icon="🌍"
+        icon="🧭"
         tone="green"
       />
       <IntroductionSection />

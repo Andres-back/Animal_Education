@@ -5,9 +5,9 @@ export default function AnimalesPage() {
   return (
     <main>
       <PageHeader
-        eyebrow="Galería"
+        eyebrow="Galería de exploración"
         title="Explora los animales"
-        description="Mira cada animal, su grupo alimenticio y una pista sencilla sobre lo que come."
+        description="Mira cada animal, compara sus pistas y descubre cómo se agrupan según su alimentación."
         icon="🔎"
         tone="sky"
       />

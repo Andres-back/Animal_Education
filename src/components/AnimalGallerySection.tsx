@@ -6,7 +6,7 @@ import AnimalCard from "./AnimalCard";
 
 export default function AnimalGallerySection() {
   return (
-    <section className="bg-white px-4 py-14 sm:px-6 sm:py-20">
+    <section className="animal-pattern bg-white px-4 py-14 sm:px-6 sm:py-20">
       <div className="mx-auto max-w-7xl">
         {categories.map((category, index) => {
           const categoryAnimals = animals.filter((animal) => animal.category === category.type);
@@ -14,7 +14,9 @@ export default function AnimalGallerySection() {
           return (
             <motion.section
               key={category.type}
-              className={index === 0 ? "" : "mt-14"}
+              className={`rounded-[28px] border border-slate-200/70 bg-white/90 p-4 shadow-sm backdrop-blur sm:p-6 ${
+                index === 0 ? "" : "mt-14"
+              }`}
               initial={{ opacity: 0, y: 18 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-80px" }}
@@ -39,7 +41,7 @@ export default function AnimalGallerySection() {
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 gap-5 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                 {categoryAnimals.map((animal) => (
                   <AnimalCard key={animal.id} animal={animal} category={category} />
                 ))}

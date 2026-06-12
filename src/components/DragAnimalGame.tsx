@@ -261,6 +261,24 @@ const categoryDisplay: Record<
   },
 };
 
+const tutorialSteps = [
+  {
+    step: "1",
+    title: "Observa",
+    text: "Mira la forma del cuerpo, los dientes, las patas y el comportamiento.",
+  },
+  {
+    step: "2",
+    title: "Pide una pista",
+    text: "Toca Pista si necesitas más información sin ver la respuesta.",
+  },
+  {
+    step: "3",
+    title: "Arrastra",
+    text: "Toma cualquier parte de la tarjeta y suéltala en el grupo correcto.",
+  },
+];
+
 function getZoneType(zoneId: string): AnimalType | null {
   if (zoneId === "zone-carnivoro") return "carnivoro";
   if (zoneId === "zone-herbivoro") return "herbivoro";
@@ -284,44 +302,47 @@ function DraggableModelCard({
     disabled: animal.status === "correct",
   });
 
+  const stopDragActivation = (event: React.SyntheticEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+  };
+
   return (
-    <motion.div
+    <motion.article
       ref={setNodeRef}
       data-animal-id={animal.id}
-      className={`rounded-[28px] border-4 bg-white shadow-lg outline-none transition ${
-        category.borderClass
-      } ${isDragging ? "opacity-35 ring-4 ring-violet-300" : ""} ${
+      className={`touch-none rounded-[28px] border-4 bg-white shadow-lg outline-none transition ${
+        animal.status === "correct" ? "cursor-default" : "cursor-grab active:cursor-grabbing"
+      } ${category.borderClass} ${isDragging ? "opacity-35 ring-4 ring-violet-300" : ""} ${
         animal.status === "incorrect" ? "ring-4 ring-red-300" : ""
       }`}
-      whileHover={{ y: -5, scale: 1.02 }}
+      whileHover={animal.status === "correct" ? undefined : { y: -5, scale: 1.02 }}
+      {...listeners}
+      {...attributes}
     >
-      <div className={`h-40 rounded-t-[22px] sm:h-44 xl:h-48 ${category.softBgClass}`}>
+      <div className={`h-44 rounded-t-[22px] sm:h-48 xl:h-52 ${category.softBgClass}`}>
         <ModelViewer src={animal.model} alt={`Modelo 3D de ${animal.name}`} ar />
       </div>
-      <div className="p-3 text-center sm:p-4">
+      <div className="p-4 text-center">
         <h3 className="text-xl font-black text-slate-950">{animal.name}</h3>
-        <p className="mt-1 text-sm font-bold leading-5 text-slate-600">
+        <p className="mx-auto mt-2 min-h-10 max-w-sm text-sm font-bold leading-5 text-slate-600">
           {animal.hint}
         </p>
-        <div className="mt-4 grid gap-2 min-[420px]:grid-cols-2">
-          <button
-            type="button"
-            className="touch-none rounded-full bg-violet-600 px-4 py-3 text-xs font-black uppercase tracking-wide text-white shadow-md transition hover:bg-violet-700"
-            {...listeners}
-            {...attributes}
-          >
-            Arrastrar 3D
-          </button>
-          <button
-            type="button"
-            onClick={() => onPreview(animal)}
-            className="rounded-full bg-slate-100 px-4 py-3 text-xs font-black uppercase tracking-wide text-slate-700 transition hover:bg-slate-200"
-          >
-            Ver 3D / AR
-          </button>
-        </div>
+        <button
+          type="button"
+          onPointerDownCapture={stopDragActivation}
+          onMouseDownCapture={stopDragActivation}
+          onTouchStartCapture={stopDragActivation}
+          onKeyDownCapture={stopDragActivation}
+          onClick={(event) => {
+            event.stopPropagation();
+            onPreview(animal);
+          }}
+          className="mt-4 w-full rounded-full bg-amber-400 px-4 py-3 text-sm font-black uppercase tracking-wide text-slate-950 shadow-md transition hover:bg-amber-300 focus:outline-none focus:ring-4 focus:ring-amber-200"
+        >
+          Pista
+        </button>
       </div>
-    </motion.div>
+    </motion.article>
   );
 }
 
@@ -366,7 +387,7 @@ function ModelPreviewModal({
       exit={{ opacity: 0 }}
       role="dialog"
       aria-modal="true"
-      aria-label={`Vista 3D de ${animal.name}`}
+      aria-label={`Pista de ${animal.name}`}
     >
       <motion.div
         className="w-full max-w-6xl overflow-hidden rounded-[34px] bg-white shadow-2xl"
@@ -374,22 +395,22 @@ function ModelPreviewModal({
         animate={{ scale: 1, y: 0 }}
         exit={{ scale: 0.92, y: 20 }}
       >
-        <div className="flex items-center justify-between gap-4 border-b-4 border-violet-100 p-4">
+        <div className="flex items-start justify-between gap-4 border-b-4 border-violet-100 p-4">
           <div>
-            <p className="mb-2 inline-flex rounded-full bg-violet-100 px-3 py-1 text-xs font-black text-violet-700">
-              Observa antes de clasificar
+            <p className="mb-2 inline-flex rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-700">
+              Pista del explorador
             </p>
             <h2 className="text-3xl font-black text-slate-950">
               {animal.name}
             </h2>
             <p className="text-sm font-bold text-slate-600">
-              Gira el modelo, lee las pistas y decide su grupo sin ver la respuesta.
+              Gira el modelo y observa pistas; la respuesta no aparece aquí.
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-200"
+            className="shrink-0 rounded-full bg-slate-100 px-4 py-2 text-sm font-black text-slate-700 transition hover:bg-slate-200"
           >
             Cerrar
           </button>
@@ -406,12 +427,12 @@ function ModelPreviewModal({
           </div>
           <div className="bg-white p-5">
             <h3 className="text-2xl font-black text-slate-950">
-              Ficha del explorador
+              Observa antes de clasificar
             </h3>
             <div className="mt-4 grid gap-3">
               <div className="rounded-3xl border-4 border-amber-200 bg-amber-50 p-4">
                 <p className="text-sm font-black uppercase tracking-wide text-amber-700">
-                  Observa su cuerpo
+                  Cuerpo
                 </p>
                 <p className="mt-1 text-lg font-extrabold text-slate-800">
                   {lesson.observation}
@@ -419,7 +440,7 @@ function ModelPreviewModal({
               </div>
               <div className="rounded-3xl border-4 border-sky-200 bg-sky-50 p-4">
                 <p className="text-sm font-black uppercase tracking-wide text-sky-700">
-                  ¿Dónde vive?
+                  Hogar
                 </p>
                 <p className="mt-1 text-lg font-extrabold text-slate-800">
                   {lesson.habitat}
@@ -427,7 +448,7 @@ function ModelPreviewModal({
               </div>
               <div className="rounded-3xl border-4 border-emerald-200 bg-emerald-50 p-4">
                 <p className="text-sm font-black uppercase tracking-wide text-emerald-700">
-                  Pista para pensar
+                  Para pensar
                 </p>
                 <p className="mt-1 text-lg font-extrabold text-slate-800">
                   {lesson.clue}
@@ -443,7 +464,7 @@ function ModelPreviewModal({
               </div>
             </div>
             <p className="mt-5 rounded-3xl bg-slate-100 p-4 text-center text-sm font-black text-slate-600">
-              Cuando termines de observar, cierra esta ventana y arrástralo al grupo correcto.
+              Cuando termines, cierra esta ventana y arrastra la tarjeta completa.
             </p>
           </div>
         </div>
@@ -500,6 +521,7 @@ function DropZone({
   return (
     <motion.section
       ref={setNodeRef}
+      data-zone-id={zoneId}
       className={`min-h-64 rounded-[32px] border-4 border-dashed p-5 shadow-md transition ${
         isOver ? category.softBgClass : "bg-white/85"
       }`}
@@ -688,25 +710,63 @@ export default function DragAnimalGame() {
   };
 
   return (
-    <section className="bg-gradient-to-b from-violet-50 via-white to-amber-50 px-3 py-10 sm:px-5 lg:px-8 lg:py-14">
+    <section className="leaf-pattern bg-gradient-to-b from-violet-50 via-white to-amber-50 px-3 py-10 sm:px-5 lg:px-8 lg:py-14">
       <div className="mx-auto w-full max-w-[1800px]">
-        <div className="mb-8 grid gap-4 sm:grid-cols-2">
-          <div className="rounded-[28px] border-4 border-amber-200 bg-white p-5 shadow-md">
-            <span className="text-sm font-black uppercase tracking-wide text-slate-500">
-              Puntaje
-            </span>
-            <p className="mt-1 text-4xl font-black text-amber-600">
-              {score} / {total}
-            </p>
+        <div className="mb-6 grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+            <div className="rounded-[28px] border-4 border-amber-200 bg-white p-5 shadow-md">
+              <span className="text-sm font-black uppercase tracking-wide text-slate-500">
+                Puntaje
+              </span>
+              <p className="mt-1 text-4xl font-black text-amber-600">
+                {score} / {total}
+              </p>
+            </div>
+            <div className="rounded-[28px] border-4 border-sky-200 bg-white p-5 shadow-md">
+              <span className="text-sm font-black uppercase tracking-wide text-slate-500">
+                Animales clasificados
+              </span>
+              <p className="mt-1 text-4xl font-black text-sky-600">
+                {score} de {total}
+              </p>
+            </div>
           </div>
-          <div className="rounded-[28px] border-4 border-sky-200 bg-white p-5 shadow-md">
-            <span className="text-sm font-black uppercase tracking-wide text-slate-500">
-              Animales clasificados
-            </span>
-            <p className="mt-1 text-4xl font-black text-sky-600">
-              {score} de {total}
-            </p>
-          </div>
+
+          {!isComplete && (
+            <div className="rounded-[32px] border-4 border-violet-100 bg-white p-4 shadow-md sm:p-5">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="grid h-12 w-12 place-items-center rounded-full bg-violet-600 text-2xl text-white">
+                  🐾
+                </span>
+                <div>
+                  <p className="text-sm font-black uppercase tracking-wide text-violet-600">
+                    Tutorial rápido
+                  </p>
+                  <h2 className="text-2xl font-black text-slate-950">
+                    ¿Cómo se juega?
+                  </h2>
+                </div>
+              </div>
+              <div className="grid gap-3 md:grid-cols-3">
+                {tutorialSteps.map(({ step, title, text }) => (
+                  <div
+                    key={step}
+                    className="flex items-start gap-3 rounded-3xl border-2 border-violet-100 bg-violet-50/60 p-3"
+                  >
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-violet-600 text-lg font-black text-white">
+                      {step}
+                    </span>
+                    <div>
+                      <p className="text-base font-black text-slate-950">{title}</p>
+                      <p className="text-sm font-bold leading-5 text-slate-600">
+                        {text}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div ref={messageRef} className="mb-6 min-h-14 text-center">
@@ -728,29 +788,6 @@ export default function DragAnimalGame() {
             )}
           </AnimatePresence>
         </div>
-
-        {!isComplete && (
-          <div className="mb-8 grid gap-3 md:grid-cols-3">
-            {[
-              ["1", "Observa", "Mira el animal en 3D o abre su ficha AR."],
-              ["2", "Arrastra", "Toma el botón morado y mueve el modelo."],
-              ["3", "Clasifica", "Suéltalo donde corresponde según sus pistas."],
-            ].map(([step, title, text]) => (
-              <div
-                key={step}
-                className="flex items-center gap-3 rounded-3xl border-4 border-violet-100 bg-white p-4 shadow-sm"
-              >
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-violet-600 text-xl font-black text-white">
-                  {step}
-                </span>
-                <div>
-                  <p className="text-lg font-black text-slate-950">{title}</p>
-                  <p className="text-sm font-bold text-slate-600">{text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
 
         {isComplete ? (
           <motion.div
@@ -803,10 +840,10 @@ export default function DragAnimalGame() {
                 <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                   <div>
                     <h2 className="text-2xl font-black text-slate-950">
-                      Animales 3D para arrastrar
+                      Animales 3D para clasificar
                     </h2>
                     <p className="mt-1 text-sm font-bold text-slate-600">
-                      Usa el botón “Arrastrar 3D” para ver el modelo grande mientras lo mueves.
+                      Arrastra desde cualquier parte de la tarjeta. Usa Pista solo si necesitas observar mejor.
                     </p>
                   </div>
                 </div>

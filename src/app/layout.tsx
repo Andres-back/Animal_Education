@@ -28,11 +28,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${baloo.variable} ${nunito.variable}`}>
-      <body className="min-h-screen bg-amber-50 text-slate-900 antialiased">
+      <body className="min-h-screen text-slate-900 antialiased">
         <Navbar />
         {children}
-        <footer className="border-t-4 border-emerald-200 bg-slate-900 px-4 py-8 text-center text-sm font-bold text-white">
-          Aventura Animal - Aprendamos qué comen los animales
+        <footer className="relative overflow-hidden border-t-4 border-emerald-300 bg-slate-950 px-4 py-10 text-center text-sm font-bold text-white">
+          <div className="animal-pattern absolute inset-0 opacity-10" aria-hidden />
+          <div className="relative mx-auto max-w-5xl">
+            <div className="mb-3 text-4xl" aria-hidden>
+              🐾
+            </div>
+            <p className="text-lg font-black">Aventura Animal</p>
+            <p className="mt-1 text-white/70">
+              Aprendamos qué comen los animales explorando, observando y jugando.
+            </p>
+          </div>
         </footer>
       </body>
     </html>

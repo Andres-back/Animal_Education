@@ -6,8 +6,8 @@ export default function JuegoPage() {
     <main>
       <PageHeader
         eyebrow="Reto interactivo"
-        title="Juego: arrastra cada animal a su grupo alimenticio"
-        description="Toma un animal 3D y llévalo al grupo correcto según lo que come."
+        title="Arrastra cada animal a su grupo"
+        description="Observa modelos 3D, piensa en sus pistas y clasifícalos sin que la respuesta aparezca primero."
         icon="🎮"
         tone="violet"
       />
