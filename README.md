@@ -56,10 +56,10 @@ Las imagenes publicas estan en:
 public/imagenes
 ```
 
-Los modelos 3D publicos estan en:
+Los modelos 3D fuente estan en:
 
 ```txt
-public/glb
+glb
 ```
 
-Si agregas modelos nuevos en `glb`, el script `prebuild` los sincroniza automaticamente a `public/glb` antes de construir.
+El script `predev` y `prebuild` sincroniza automaticamente esos modelos a `public/glb`.
